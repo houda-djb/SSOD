@@ -18,7 +18,11 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=8)
 
 from app.models import db
 db.init_app(app)
-CORS(app)
+CORS(app, origins=[
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'https://clever-liger-edbbea.netlify.app'
+])
 JWTManager(app)
 
 with app.app_context():
