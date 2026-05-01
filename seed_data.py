@@ -1,20 +1,13 @@
-"""
-SSOD — seed_data.py
-Populates the database with realistic logs and alerts for testing
-Author: SYLVAH™ | 2026
-Run: python seed_data.py (with venv active, from backend folder)
-"""
-
 import requests
 import random
 import time
 from datetime import datetime
 
-BASE = "http://localhost:5000/api"
+BASE_URL = 'https://ssod-backend.onrender.com/api'
 
 # ── Login as admin to get token ──
 print("🔐 Logging in as admin...")
-res = requests.post(f"{BASE}/auth/login", json={"username":"admin","password":"admin123"})
+res = requests.post(f"{BASE_URL}/auth/login", json={"username":"ssodadmin","password":"Admin@1234"})
 if res.status_code != 200:
     print("❌ Login failed:", res.json())
     exit(1)
@@ -40,19 +33,18 @@ alerts = [
 
 print(f"📢 Seeding {len(alerts)} alerts...")
 for a in alerts:
-    r = requests.post(f"{BASE}/alerts/add", json=a, headers=headers)
+    r = requests.post(f"{BASE_URL}/alerts/add", json=a, headers=headers)
     status = "✅" if r.status_code == 201 else "❌"
     print(f"  {status} [{a['severity'].upper()}] {a['title'][:60]}")
     time.sleep(0.1)
 
 # ── Resolve some alerts ──
 print("\n✅ Resolving some alerts...")
-res2 = requests.get(f"{BASE}/alerts", headers=headers)
+res2 = requests.get(f"{BASE_URL}/alerts", headers=headers)
 all_alerts = res2.json()
-# Resolve low and some medium ones
-to_resolve = [a for a in all_alerts if a['severity'] in ['low'] ][:4]
+to_resolve = [a for a in all_alerts if a['severity'] in ['low']][:4]
 for a in to_resolve:
-    r = requests.put(f"{BASE}/alerts/resolve/{a['id']}", headers=headers)
+    r = requests.put(f"{BASE_URL}/alerts/resolve/{a['id']}", headers=headers)
     if r.status_code == 200:
         print(f"  ✅ Resolved: {a['title'][:60]}")
 
@@ -77,7 +69,7 @@ logs = [
 
 print(f"\n📋 Seeding {len(logs)} logs...")
 for l in logs:
-    r = requests.post(f"{BASE}/logs/add", json=l, headers=headers)
+    r = requests.post(f"{BASE_URL}/logs/add", json=l, headers=headers)
     status = "✅" if r.status_code == 201 else "❌"
     print(f"  {status} [{l['log_type'].upper()}] {l['action'][:60]}")
     time.sleep(0.1)
